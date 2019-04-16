@@ -1,0 +1,56 @@
+CREATE FUNCTION complex_in(cstring)
+   RETURNS complex
+   AS '_OBJWD_/complex'
+   LANGUAGE C IMMUTABLE STRICT;
+
+   CREATE FUNCTION complex_out(complex)
+   RETURNS cstring
+   AS '_OBJWD_/complex'
+   LANGUAGE C IMMUTABLE STRICT;
+
+
+
+   CREATE TYPE complex (
+   internallength = 16,
+   input = complex_in,
+   output = complex_out,
+   alignment = int
+);
+
+CREATE FUNCTION complex_intersection(complex, complex)
+  RETURNS complex
+  AS '_OBJWD_/complex'
+  LANGUAGE C IMMUTABLE STRICT;
+
+CREATE OPERATOR && (
+  leftarg = complex,
+  rightarg = complex,
+  procedure = complex_intersection,
+  commutator = &&
+);
+
+CREATE AGGREGATE complex_intersect (
+  sfunc = complex_intersection,
+  basetype = complex,
+  stype = complex
+);
+
+
+CREATE FUNCTION complex_union(complex, complex)
+  RETURNS complex
+  AS '_OBJWD_/complex'
+  LANGUAGE C IMMUTABLE STRICT;
+
+CREATE OPERATOR || (
+  leftarg = complex,
+  rightarg = complex,
+  procedure = complex_union,
+  commutator = ||
+);
+
+CREATE AGGREGATE complex_union (
+  sfunc = complex_union,
+  basetype = complex,
+  stype = complex
+);
+
